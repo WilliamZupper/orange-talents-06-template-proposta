@@ -2,6 +2,7 @@ package br.com.william.ot6.proposta.dto;
 
 import br.com.william.ot6.proposta.modelo.Proposta;
 import br.com.william.ot6.proposta.validacao.CPF_CNPJ;
+import br.com.william.ot6.proposta.validacao.UniqueValue;
 
 import javax.validation.constraints.*;
 import java.math.BigDecimal;
@@ -10,6 +11,7 @@ public class PropostaRequest {
 
     @NotBlank
     @CPF_CNPJ
+    @UniqueValue(Classe = Proposta.class , campo = "documento")
     private String documento;
 
      @NotBlank
