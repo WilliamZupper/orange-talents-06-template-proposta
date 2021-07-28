@@ -1,5 +1,12 @@
 package br.com.william.ot6.proposta.modelo;
 
+import br.com.william.ot6.proposta.config.AnaliseCliente;
+import br.com.william.ot6.proposta.dto.AnaliseFinanceiraRequest;
+import br.com.william.ot6.proposta.dto.AnaliseFinanceiraResponse;
+import br.com.william.ot6.proposta.enums.PropostaStatus;
+import br.com.william.ot6.proposta.enums.StatusAnalise;
+import br.com.william.ot6.proposta.repositories.PropostaRepository;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 
@@ -27,6 +34,10 @@ public class Proposta {
 
    @Column(nullable = false)
     private BigDecimal salario;
+
+    @Enumerated(value = EnumType.STRING)
+    private PropostaStatus status;
+
 
     public Proposta(String documento, String email, String nome, String endereco, BigDecimal salario) {
         this.documento = documento;
@@ -62,5 +73,16 @@ public class Proposta {
 
     public BigDecimal getSalario() {
         return salario;
+    }
+
+    public void atualiza(PropostaRepository repository, AnaliseCliente analiseCliente) {
+
+        AnaliseFinanceiraRequest analiseFinanceiraRequest = new AnaliseFinanceiraRequest(documento, nome, id.toString());
+        AnaliseFinanceiraResponse analiseFinanceiraResponse = analiseCliente.consultaAnalise(analiseFinanceiraRequest);
+
+        StatusAnalise statusAnalise = analiseFinanceiraResponse.getResultadoSolicitacao();
+        this.status = statusAnalise.converte();
+
+        repository.save(this);
     }
 }
